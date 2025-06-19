@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SGPA Calculator – Group A & B</title>
   <style>
     body {
-      background: #fff0f2;
+      background: #fff0f4;
       margin: 0;
       padding: 20px;
       font-family: 'Segoe UI', sans-serif;
@@ -13,41 +14,64 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-height: 100vh;
     }
     h1 {
       margin-bottom: 10px;
+      user-select: none;
     }
     .group-select {
       margin-bottom: 20px;
       font-size: 1.1rem;
     }
     .group-select label {
-      margin: 0 10px;
+      margin: 0 15px;
       cursor: pointer;
+      user-select: none;
     }
     table {
-      width: 100%; max-width: 900px;
-      border-collapse: collapse;
+      width: 100%;
+      max-width: 950px;
+      border-collapse: separate;
+      border-spacing: 0;
       margin-bottom: 20px;
       animation: fadeIn 0.5s ease;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 15px rgba(255, 133, 161, 0.25);
     }
     th, td {
-      padding: 10px; text-align: center;
-      border: 1px solid #f7aac9;
+      padding: 12px 10px;
+      text-align: center;
+      border: 1px solid #ffbfd8;
+      background: #ffe8f1;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.3s;
     }
     thead th {
-      background: #f2a4c6;
+      background: #ff99c8;
       color: white;
-      font-size: 0.95rem;
+      font-size: 1rem;
+      font-weight: 700;
     }
     tbody tr:hover {
-      background: #ffd7eb;
+      background: #ffe4ed;
+    }
+    tbody tr:nth-child(odd) td {
+      background: #ffd1df;
     }
     input {
-      width: 60px; padding: 6px;
+      width: 65px;
+      padding: 6px 8px;
       border: 2px solid #f7aac9;
-      border-radius: 6px; text-align: center;
-      font-weight: 500; transition: all 0.2s ease;
+      border-radius: 14px;
+      text-align: center;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      background: #fff8fb;
+      font-size: 0.95rem;
+      outline-offset: 2px;
     }
     input:focus {
       border-color: #ff7eb9;
@@ -56,37 +80,59 @@
       box-shadow: 0 0 8px #ffbad2;
     }
     input[disabled] {
-      background: #fde3ec;
-      color: #b28492;
+      background: #fbe6ee;
+      color: #a999a9;
+      cursor: not-allowed;
     }
     button {
-      padding: 12px 30px;
-      font-size: 1rem;
-      font-weight: 600;
+      padding: 14px 34px;
+      font-size: 1.1rem;
+      font-weight: 700;
       background: #ff85a1;
       border: none;
-      border-radius: 30px;
+      border-radius: 36px;
       color: white;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(255, 133, 161, 0.5);
+      box-shadow: 0 6px 14px rgba(255, 133, 161, 0.5);
       transition: background 0.3s, transform 0.2s;
+      user-select: none;
     }
     button:hover {
       background: #ff4b86;
-      transform: translateY(-2px);
+      transform: translateY(-3px);
     }
     button:active {
       transform: translateY(0);
     }
     #result {
-      max-width: 900px;
+      max-width: 950px;
       text-align: center;
-      margin: 20px 0;
-      padding: 15px;
-      background: #fde3ec;
-      border-radius: 8px;
-      box-shadow: 0 0 12px #f9c5d5;
+      margin: 20px 0 40px;
+      padding: 22px;
+      background: #ffe8f1;
+      border-radius: 14px;
+      box-shadow: 0 0 16px #f9c5d5;
       animation: fadeIn 0.5s ease;
+      font-weight: 600;
+      color: #5a0039;
+      user-select: none;
+    }
+    #result table {
+      margin: 15px auto;
+      width: 80%;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(255, 133, 161, 0.2);
+    }
+    #result th, #result td {
+      padding: 10px 8px;
+      background: #ffbcd4;
+      border: none;
+      color: white;
+      font-size: 1rem;
+    }
+    #result tbody tr:nth-child(odd) td {
+      background: #ff8eb3;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
@@ -96,15 +142,15 @@
 </head>
 <body>
 
-  <h1>SGPA Calculator</h1>
+  <h1>🎓 SGPA Calculator</h1>
 
-  <div class="group-select">
-    <label><input type="radio" name="group" value="A"> Group A</label>
-    <label><input type="radio" name="group" value="B" checked> Group B</label>
+  <div class="group-select" role="radiogroup" aria-label="Select Group">
+    <label><input type="radio" name="group" value="A" checked aria-checked="true"> Group A</label>
+    <label><input type="radio" name="group" value="B" aria-checked="false"> Group B</label>
   </div>
 
-  <form id="gpaForm">
-    <table>
+  <form id="gpaForm" aria-describedby="result">
+    <table aria-label="Marks input table">
       <thead>
         <tr>
           <th>Subject</th>
@@ -112,108 +158,155 @@
           <th>In Sem (30)</th>
           <th>Attendance</th>
           <th>Internals</th>
-          <th>Lab Marks</th>
+          <th>Lab / TW</th>
         </tr>
       </thead>
       <tbody id="tableBody"></tbody>
     </table>
-    <button type="submit">Calculate SGPA</button>
+    <button type="submit" aria-label="Calculate SGPA">🎯 Calculate SGPA</button>
   </form>
 
-  <div id="result"></div>
+  <div id="result" aria-live="polite" aria-atomic="true"></div>
 
-<script>
-  const groups = {
-    A: [
-      { name:'SIC', theory:true, labMax:25, attMax:5, intMax:15 },
-      { name:'CST', theory:true, labMax:25, attMax:5, intMax:15 },
-      { name:'ESE', theory:true, labMax:0, attMax:5, intMax:15 },
-      { name:'CGD', theory:true, labMax:25, attMax:5, intMax:15 },
-      { name:'OOPC', theory:true, labMax:25, attMax:5, intMax:15 },
-      { name:'IKS', theory:false, labMax:25, attMax:5, intMax:20 },
-      { name:'iidtl', theory:false, labMax:50, attMax:0, intMax:0 },
-      { name:'NPTEL', theory:false, labMax:25, attMax:0, intMax:0 },
-      { name:'CCA', theory:false, labMax:25, attMax:0, intMax:0 }
-    ],
-    B: [
-      { name:'SIC', theory:true, labMax:25, attMax:5, intMax:15 },
-      { name:'IEEE', theory:true, labMax:25, attMax:5, intMax:15 },
-      { name:'QP', theory:true, labMax:25, attMax:5, intMax:15 },
-      { name:'MFR', theory:true, labMax:25, attMax:5, intMax:15 },
-      { name:'OOPC', theory:true, labMax:25, attMax:5, intMax:15 },
-      { name:'IKS', theory:false, labMax:25, attMax:5, intMax:20 },
-      { name:'FabLab', theory:false, labMax:25, attMax:0, intMax:0 },
-      { name:'CCA', theory:false, labMax:25, attMax:0, intMax:0 }
-    ]
-  };
+  <script>
+    const groups = {
+      A: [
+        { name:'SIC', theory:true, labMax:25, attMax:5, intMax:15 },
+        { name:'CST', theory:true, labMax:25, attMax:5, intMax:15 },
+        { name:'ESE', theory:true, labMax:0, attMax:5, intMax:15 }, // No lab GP
+        { name:'CGD', theory:true, labMax:25, attMax:5, intMax:15 },
+        { name:'OOPC', theory:true, labMax:25, attMax:5, intMax:15 },
+        { name:'IKS', theory:false, labMax:25, attMax:5, intMax:20 },
+        { name:'IIDTL', theory:false, labMax:50, attMax:0, intMax:0 },
+        { name:'NPTEL', theory:false, labMax:25, attMax:0, intMax:0 },
+        { name:'CCA', theory:false, labMax:25, attMax:0, intMax:0 }
+      ],
+      B: [
+        { name:'SIC', theory:true, labMax:25, attMax:5, intMax:15 },
+        { name:'IEEE', theory:true, labMax:25, attMax:5, intMax:15 },
+        { name:'QP', theory:true, labMax:25, attMax:5, intMax:15 },
+        { name:'MFR', theory:true, labMax:25, attMax:5, intMax:15 },
+        { name:'OOPC', theory:true, labMax:25, attMax:5, intMax:15 },
+        { name:'IKS', theory:false, labMax:25, attMax:5, intMax:20 },
+        { name:'FabLab', theory:false, labMax:25, attMax:0, intMax:0 },
+        { name:'CCA', theory:false, labMax:25, attMax:0, intMax:0 }
+      ]
+    };
 
-  function buildTable(g) {
-    const body = document.getElementById('tableBody');
-    body.innerHTML = '';
-    groups[g].forEach(s => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${s.name}</td>
-        <td><input type="number" name="${s.name}_end" min="0" max="${s.theory?70:0}" ${s.theory?'required':''} ${s.theory?'':'disabled'}></td>
-        <td><input type="number" name="${s.name}_in" min="0" max="${s.theory?30:0}" ${s.theory?'required':''} ${s.theory?'':'disabled'}></td>
-        <td><input type="number" name="${s.name}_att" min="0" max="${s.attMax}" ${s.attMax?'required':''} ${s.attMax?'':'disabled'}></td>
-        <td><input type="number" name="${s.name}_int" min="0" max="${s.intMax}" ${s.intMax?'required':''} ${s.intMax?'':'disabled'}></td>
-        <td><input type="number" name="${s.name}_lab" min="0" max="${s.labMax}" ${s.labMax?'required':''} ${s.labMax?'':'disabled'}></td>
-      `;
-      body.appendChild(tr);
+    function buildTable(groupKey) {
+      const body = document.getElementById('tableBody');
+      body.innerHTML = '';
+      groups[groupKey].forEach(s => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${s.name}</td>
+          <td><input type="number" name="${s.name}_end" min="0" max="${s.theory ? 70 : 0}" ${s.theory ? '' : 'disabled'}></td>
+          <td><input type="number" name="${s.name}_in" min="0" max="${s.theory ? 30 : 0}" ${s.theory ? '' : 'disabled'}></td>
+          <td><input type="number" name="${s.name}_att" min="0" max="${s.attMax}" ${s.attMax ? '' : 'disabled'}></td>
+          <td><input type="number" name="${s.name}_int" min="0" max="${s.intMax}" ${s.intMax ? '' : 'disabled'}></td>
+          <td><input type="number" name="${s.name}_lab" min="0" max="${s.labMax}" ${s.labMax ? '' : 'disabled'}></td>
+        `;
+        body.appendChild(tr);
+      });
+      document.getElementById('result').innerHTML = '';
+    }
+
+    document.querySelectorAll('input[name="group"]').forEach(radio => {
+      radio.addEventListener('change', e => {
+        buildTable(e.target.value);
+      });
     });
-    document.getElementById('result').innerHTML = '';
-  }
 
-  document.querySelectorAll('input[name=group]').forEach(radio =>
-    radio.addEventListener('change', e => buildTable(e.target.value))
-  );
+    // Initialize with Group A selected
+    buildTable('A');
 
-  // Initialize with Group B
-  buildTable('B');
+    // Grade Point calculation for theory marks
+    function gpTheory(totalMarks) {
+      if (totalMarks >= 91) return 10;
+      if (totalMarks >= 81) return 9;
+      if (totalMarks >= 71) return 8;
+      if (totalMarks >= 61) return 7;
+      if (totalMarks >= 51) return 6;
+      if (totalMarks >= 40) return 5;
+      return 0;
+    }
 
-  const gpTh = t => t>=91?10:t>=81?9:t>=71?8:t>=61?7:t>=51?6:t>=40?5:0;
-  const gpLb = (m,max) => max===50
-    ? m>=46?10:m>=41?9:m>=36?8:m>=31?7:m>=26?6:m>=21?5:0
-    : m>=23?10:m>=21?9:m>=18?8:m>=16?7:m>=13?6:5;
-
-  document.getElementById('gpaForm').addEventListener('submit', e => {
-    e.preventDefault();
-    const grp = document.querySelector('input[name=group]:checked').value;
-    let totGP=0, mxGP=0, rows='';
-
-    groups[grp].forEach(s => {
-      const end = +document.querySelector(`[name=${s.name}_end]`)?.value || 0;
-      const ins = +document.querySelector(`[name=${s.name}_in]`)?.value || 0;
-      const att = +document.querySelector(`[name=${s.name}_att]`)?.value || 0;
-      const intr = +document.querySelector(`[name=${s.name}_int]`)?.value || 0;
-      const lab = +document.querySelector(`[name=${s.name}_lab]`)?.value || 0;
-      let thGP=0;
-
-      if (s.theory) {
-        const e60 = Math.round(end*60/70), i20 = Math.round(ins*20/30);
-        thGP = gpTh(e60 + i20 + att + intr);
-        totGP += thGP; mxGP += 10;
+    // Grade Point calculation for lab / termwork marks
+    // Different scale if max marks = 50 or 25
+    function gpLab(marks, max) {
+      if (max === 50) {
+        if (marks >= 46) return 10;
+        if (marks >= 41) return 9;
+        if (marks >= 36) return 8;
+        if (marks >= 31) return 7;
+        if (marks >= 26) return 6;
+        if (marks >= 21) return 5;
+        return 0;
+      } else {
+        if (marks >= 23) return 10;
+        if (marks >= 21) return 9;
+        if (marks >= 18) return 8;
+        if (marks >= 16) return 7;
+        if (marks >= 13) return 6;
+        if (marks >= 10) return 5;
+        return 0;
       }
+    }
 
-      const lbGP = gpLb(lab, s.labMax);
-      totGP += lbGP; mxGP += 10;
+    document.getElementById('gpaForm').addEventListener('submit', e => {
+      e.preventDefault();
 
-      rows += `<tr><td>${s.name}</td><td>${thGP}</td><td>${lbGP}</td></tr>`;
+      const groupKey = document.querySelector('input[name="group"]:checked').value;
+
+      let totalGP = 0, maxGP = 0;
+      let rowsHTML = '';
+
+      groups[groupKey].forEach(s => {
+        const end = +document.querySelector(`[name=${s.name}_end]`)?.value || 0;
+        const ins = +document.querySelector(`[name=${s.name}_in]`)?.value || 0;
+        const att = +document.querySelector(`[name=${s.name}_att]`)?.value || 0;
+        const intr = +document.querySelector(`[name=${s.name}_int]`)?.value || 0;
+        const lab = +document.querySelector(`[name=${s.name}_lab]`)?.value || 0;
+
+        let thGP = 0, lbGP = 0;
+
+        if (s.theory) {
+          // Scale end sem and in sem marks to 60 and 20 out of 80 theory marks total
+          const scaledEnd = Math.round((end * 60) / 70);
+          const scaledIn = Math.round((ins * 20) / 30);
+          const theoryTotal = scaledEnd + scaledIn + att + intr;
+          thGP = gpTheory(theoryTotal);
+          totalGP += thGP;
+          maxGP += 10;
+        }
+
+        // ESE in Group A has no lab component, so skip lab GP for it
+        if (!(groupKey === 'A' && s.name === 'ESE')) {
+          lbGP = gpLab(lab, s.labMax);
+          totalGP += lbGP;
+          maxGP += 10;
+        }
+
+        rowsHTML += `<tr>
+          <td>${s.name}</td>
+          <td>${s.theory ? thGP : 'N/A'}</td>
+          <td>${(groupKey === 'A' && s.name === 'ESE') ? 'N/A' : (s.labMax ? lbGP : 'N/A')}</td>
+        </tr>`;
+      });
+
+      const sgpa = maxGP ? (totalGP / maxGP) * 10 : 0;
+
+      document.getElementById('result').innerHTML = `
+        <h2>Results</h2>
+        <table aria-label="SGPA results">
+          <thead><tr><th>Subject</th><th>Theory Grade Point</th><th>Lab Grade Point</th></tr></thead>
+          <tbody>${rowsHTML}</tbody>
+        </table>
+        <p><strong>Total Grade Points:</strong> ${totalGP} / ${maxGP}</p>
+        <h2>SGPA: ${sgpa.toFixed(2)} / 10</h2>
+      `;
     });
-
-    const sgpa = (totGP/mxGP)*10;
-    document.getElementById('result').innerHTML = `
-      <h2>Results</h2>
-      <table>
-        <thead><tr><th>Subject</th><th>Theory GP</th><th>Lab GP</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-      <p><strong>Total GP:</strong> ${totGP} / ${mxGP}</p>
-      <h2>SGPA: ${sgpa.toFixed(2)} / 10</h2>`;
-  });
-</script>
+  </script>
 </body>
 </html>
-
 
