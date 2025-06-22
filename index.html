@@ -173,7 +173,7 @@
       A: [
         { name:'SIC', theory:true, labMax:25, attMax:5, intMax:15 },
         { name:'CST', theory:true, labMax:25, attMax:5, intMax:15 },
-        { name:'ESE', theory:true, labMax:0, attMax:5, intMax:15 }, // No lab GP
+        { name:'ESE', theory:true, labMax:0, attMax:5, intMax:15 },
         { name:'CGD', theory:true, labMax:25, attMax:5, intMax:15 },
         { name:'OOPC', theory:true, labMax:25, attMax:5, intMax:15 },
         { name:'SS', theory:false, labMax:25, attMax:5, intMax:20 },
@@ -220,7 +220,6 @@
     // Initialize with Group A selected
     buildTable('A');
 
-    // Grade Point calculation for theory marks
     function gpTheory(totalMarks) {
       if (totalMarks >= 91) return 10;
       if (totalMarks >= 81) return 9;
@@ -231,8 +230,6 @@
       return 0;
     }
 
-    // Grade Point calculation for lab / termwork marks
-    // Different scale if max marks = 50 or 25
     function gpLab(marks, max) {
       if (max === 50) {
         if (marks >= 46) return 10;
@@ -257,8 +254,8 @@
       e.preventDefault();
 
       const groupKey = document.querySelector('input[name="group"]:checked').value;
-
-      let totalGP = 0, maxGP = 0;
+      let totalWeightedGP = 0;
+      let totalCredits = 0;
       let rowsHTML = '';
 
       groups[groupKey].forEach(s => {
@@ -268,45 +265,49 @@
         const intr = +document.querySelector(`[name=${s.name}_int]`)?.value || 0;
         const lab = +document.querySelector(`[name=${s.name}_lab]`)?.value || 0;
 
-        let thGP = 0, lbGP = 0;
+        let thGP = 0, lbGP = 0, thCredit = 0, lbCredit = 0;
 
         if (s.theory) {
-          // Scale end sem and in sem marks to 60 and 20 out of 80 theory marks total
           const scaledEnd = Math.round((end * 60) / 70);
           const scaledIn = Math.round((ins * 20) / 30);
           const theoryTotal = scaledEnd + scaledIn + att + intr;
           thGP = gpTheory(theoryTotal);
-          totalGP += thGP;
-          maxGP += 10;
+
+          thCredit = (s.name === 'SIC') ? 3 : 2;
+          totalWeightedGP += thGP * thCredit;
+          totalCredits += thCredit;
         }
 
-        // ESE in Group A has no lab component, so skip lab GP for it
         if (!(groupKey === 'A' && s.name === 'ESE')) {
           lbGP = gpLab(lab, s.labMax);
-          totalGP += lbGP;
-          maxGP += 10;
+          lbCredit = 1;
+          totalWeightedGP += lbGP * lbCredit;
+          totalCredits += lbCredit;
         }
 
         rowsHTML += `<tr>
           <td>${s.name}</td>
-          <td>${s.theory ? thGP : 'N/A'}</td>
-          <td>${(groupKey === 'A' && s.name === 'ESE') ? 'N/A' : (s.labMax ? lbGP : 'N/A')}</td>
+          <td>${s.theory ? thGP + ` × ${thCredit}` : 'N/A'}</td>
+          <td>${(groupKey === 'A' && s.name === 'ESE') ? 'N/A' : lbGP + ' × 1'}</td>
         </tr>`;
       });
 
-      const sgpa = maxGP ? (totalGP / maxGP) * 10 : 0;
+      const sgpa = totalCredits ? (totalWeightedGP / totalCredits).toFixed(2) : '0.00';
 
       document.getElementById('result').innerHTML = `
         <h2>Results</h2>
         <table aria-label="SGPA results">
-          <thead><tr><th>Subject</th><th>Theory Grade Point</th><th>Lab Grade Point</th></tr></thead>
+          <thead><tr><th>Subject</th><th>Theory GP × Credit</th><th>Lab GP × Credit</th></tr></thead>
           <tbody>${rowsHTML}</tbody>
         </table>
-        <p><strong>Total Grade Points:</strong> ${totalGP} / ${maxGP}</p>
-        <h2>SGPA: ${sgpa.toFixed(2)} / 10</h2>
+        <p><strong>Total Weighted Grade Points:</strong> ${totalWeightedGP}</p>
+        <p><strong>Total Credits:</strong> ${totalCredits}</p>
+        <h2>SGPA: ${sgpa} / 10</h2>
+        <p>(Calculated using grade points × credit per subject)</p>
       `;
     });
   </script>
 </body>
 </html>
+
 
